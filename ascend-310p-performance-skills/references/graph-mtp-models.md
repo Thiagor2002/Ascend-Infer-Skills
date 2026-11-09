@@ -4,7 +4,7 @@
 
 ## 图模式
 
-310P MRV2 使用 ACLGraph，对外配置名仍是 cudagraph。
+310P MRV2 使用 ACLGraph，对外配置名仍是 cudagraph。event-id 数量、TP>1 能捕获的图张数和 `enable_npugraph_ex` 见 [hardware-constraints.md](hardware-constraints.md)。
 
 - `FULL_DECODE_ONLY`：mixed mode 为 NONE，prefill 和 prefix-cache hit 保持 eager。这是默认应对比的图模式。
 - 若配置里仍有 mixed FULL，`PrefillCacheHit` 和 `ChunkedPrefill` 必须强制 eager，不能 replay decode 图。

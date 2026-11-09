@@ -1,8 +1,8 @@
 # Ascend 310P 性能 Skill
 
-给 Cursor、Codex、Claude Code 使用的同一份技能。它指导 agent 在 Ascend 310P 上维护 vLLM-Ascend 的推理性能：对照已有优化不变量、用 ais_bench 拆开验证、解读 profiler，并在证据足够时替换融合算子。
+给 Cursor、Codex、Claude Code 使用的同一份技能。它指导 agent 看护 Ascend 310P 上 vLLM-Ascend 的推理性能，并修复明显拖慢性能的代码：Triton、错误的 FRACTAL_NZ、非法的 paged attention、多余的 event 或同步、热路径上的 host 拷贝。
 
-面向 Qwen3、Qwen3-VL、Qwen3.5、Qwen3.8，以及 Gemma 的 RMSNorm 差异。不用于纯精度定位。
+面向 Qwen3、Qwen3-VL、Qwen3.5、Qwen3.8，以及 Gemma 的 RMSNorm 差异。不用于设计新优化，也不用于纯精度定位。
 
 ## 安装
 
@@ -20,7 +20,7 @@
 
 Windows 上 `~` 是 `%USERPROFILE%`。也可以放进项目的 `.cursor/skills/`、`.codex/skills/` 或 `.claude/skills/`。不要只复制 `SKILL.md`。
 
-目录遵循开放的 Agent Skills 结构：`SKILL.md` 只放触发条件和主流程，按需细节放在一级 `references/`，避免每次调用都加载全部背景。参考：[OpenAI Skills 指南](https://developers.openai.com/api/docs/guides/tools-skills)、[Cursor Skills 文档](https://cursor.com/docs/skills)、[Claude Agent Skills 概览](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) 与 [Claude 最佳实践](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)。
+目录遵循开放的 Agent Skills 结构：`SKILL.md` 只放触发条件和主流程，执行时需要的细节放在一级 `references/`。`appendix/` 是附加资料，默认不加载。参考：[OpenAI Skills 指南](https://developers.openai.com/api/docs/guides/tools-skills)、[Cursor Skills 文档](https://cursor.com/docs/skills)、[Claude Agent Skills 概览](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) 与 [Claude 最佳实践](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)。
 
 ## 使用
 
@@ -30,22 +30,21 @@ Windows 上 `~` 是 `%USERPROFILE%`。也可以放进项目的 `.cursor/skills/`
 $ascend-310p-performance
 ```
 
-描述里包含 310P、TTFT、TPOT、吞吐、profiler、ACLGraph、MTP 或算子性能时，agent 也应载入本技能。
+描述里包含 310P 性能回退、TTFT、TPOT、图模式、MTP，或热路径上的 Triton、格式、同步、拷贝时，agent 也应载入本技能。
 
 建议一次提供：
 
 - vLLM-Ascend 源码路径、commit、模型与量化；
 - 服务命令，尤其是图模式、MTP、TP 和 batch；
 - 主指标和现有基线；
-- profiler 目录或 ais_bench 命令；
 - 本轮是否允许改代码、是否允许占空闲卡。
 
 示例：
 
 ```text
-使用 $ascend-310p-performance 分析 310P 上 Qwen3.5 的 MTP TPOT。
+使用 $ascend-310p-performance 看护 310P 上 Qwen3.5 的 MTP TPOT。
 源码在 <path>，服务命令为 <command>。主指标是稳态 TPOT。
-先不要改代码。若 profiler 显示 host 同步或 L2Norm 分解，给出单变量验证方案。
+先不要改代码。若热路径出现 Triton、逐步 ND/NZ 转换、pageable 拷贝或多余 event，指出对应代码并给出单变量验证方案。
 ```
 
 ## 目录
@@ -55,12 +54,16 @@ ascend-310p-performance/
 ├── SKILL.md
 ├── README.md
 ├── agents/openai.yaml
-└── references/
+├── references/
+│   ├── hardware-constraints.md
+│   ├── aisbench-verification.md
+│   ├── operator-substitution.md
+│   └── graph-mtp-models.md
+└── appendix/
     ├── optimization-map.md
-    ├── aisbench-verification.md
-    ├── profiler-analysis.md
-    ├── operator-substitution.md
-    └── graph-mtp-models.md
+    └── profiler-analysis.md
 ```
+
+`references/hardware-constraints.md` 写 310P 不支持 Triton、权重与 attention KV 的 FRACTAL_NZ、paged attention 的 head/block/page 限制，以及 event-id 对捕获图数量的限制。`appendix/` 保留原先的优化地图和 profiler 笔记，只在用户明确要求对照历史不变量或解读已有 trace 时打开。
 
 背景分析见 `work-docs/310p-perf/`。技能正文不依赖该目录也能执行。

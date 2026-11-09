@@ -50,7 +50,7 @@ MTP 必须同时报平均接受长度。接受率下降时先停性能结论，�
 
 在 benchmark 仓库根目录执行，先用当前版本的 `--help` / `--search` 找到模型配置与字段，不能照抄其他版本命令。性能用 `vllm_api_stream_chat`：`ignore_eos=True`，固定输入输出长度，`request_rate` 和 `batch_size` 按本层实验设定；`request_rate` 是到达速率，不等同于实际并发，二者分别记录。精度护栏用 `vllm_api_general_chat`：`temperature=0`，`ignore_eos=False`。两套结果不能互相引用。
 
-算子或元数据补丁的最低服务证据是对应的 B/F/G 中位数，加上 profiler 中目标小算子消失、融合算子出现。H 只在用户要发布口径时跑。
+漏接 kernel 或元数据修复的最低服务证据是对应的 B/F/G 中位数。用户已经提供 trace 时，再核对目标小算子是否消失、已有 kernel 是否出现。H 只在用户要发布口径时跑。不要为了补这条证据去新采 profiler。
 
 精度护栏至少是固定 prompt 的 token 对比，或用户指定数据集的小子集。L2Norm、gating、NZ、rejection 任一改动都要这条护栏。全量榜仅在用户要求时跑。
 

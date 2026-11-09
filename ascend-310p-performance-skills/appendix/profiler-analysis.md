@@ -1,6 +1,8 @@
 # Profiler 采集与读图
 
-只在采集 trace 或把已有 trace 写成优化方案时读取。没有 trace 时不要编造 op 时间。
+附录，不是本技能的执行流程。默认不要采集 trace，也不要把读图写成新的优化方案。性能看护和明显的代码问题见 [SKILL.md](../SKILL.md) 与 [hardware-constraints.md](../references/hardware-constraints.md)。
+
+仅当用户已经给出 trace，或明确要求解读某份 profiler 时才读本文。没有 trace 时不要编造 op 时间。
 
 ## 采集
 

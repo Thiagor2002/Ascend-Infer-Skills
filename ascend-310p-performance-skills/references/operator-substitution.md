@@ -1,19 +1,19 @@
-# 算子搜索与替换
+# 漏接的已有 310P kernel
 
-在 profiler 或代码审查已经把热点收成“小 vector 链、Python 路由、每步 layout 转换”时读取。用户没有点名算子，也可以做这一步。用户只要求解释时，给出候选和验证计划，不改代码。
+只在代码已经表明热路径漏接了仓库里落地的 310P 调用时读取。例如本应走 `npu_rms_norm` 却拆成 Pow、Mean、Rsqrt，或权重本应在加载时转 NZ 却在前向里 format cast。本文不用于设计新融合，也不用于从 profiler 里找下一个可替换算子。找不到受支持的现成调用就保持原实现。用户只要求解释时，给出漏接点和验证计划，不改代码。
 
-## 什么时候搜
+## 什么时候核对
 
-搜：当前 step 里重复出现、且数学是固定归约或固定重排的 op 链。已有样例是 `npu_rms_norm`、`npu_add_rms_norm`、`npu_moe_gating_top_k_softmax`、`npu_moe_init_routing_v2`、`maybe_trans_nz`。
+核对：当前 step 里本有固定归约或固定重排，而仓库已经存在对应调用。已有样例是 `npu_rms_norm`、`npu_add_rms_norm`、`npu_moe_gating_top_k_softmax`、`npu_moe_init_routing_v2`、`maybe_trans_nz`。
 
-不搜：attention 主 kernel 的内部实现、通信算法、调度策略。这些不是换一个 `torch_npu` 调用就能结束的。也不要为了“还有更快算子”替换已经融合且 profiler 占比很低的 op。
+不核对成新优化：attention 主 kernel 的内部实现、通信算法、调度策略。这些不是换一个 `torch_npu` 调用就能结束的。也不要为了“还有更快算子”替换已经接上、且没有明显错误的 op。
 
-## 怎么搜
+## 怎么核对
 
-1. 在本仓库搜同名数学的现有 310P 或 Ascend 调用，优先复用已落地的封装。
+1. 在本仓库搜同名数学的现有 310P 或 Ascend 调用，只复用已落地的封装。
 2. 在当前环境的 `torch_npu` 里确认符号存在，并记录 torch_npu/CANN 版本。不存在就淘汰该候选、保持原实现。不要编造函数名或参数。
 3. 读该调用在仓库中的已落地样例和测试，再核对当前版本文档：dtype、连续性、ACL format、维度对齐、输出语义、图捕获支持。
-4. 先做独立 microbench，覆盖目标 shape、warmup 和同步边界。只有新 kernel 的数值、耗时和 workspace 都可接受，才接服务路径。
+4. 先做独立 microbench，覆盖目标 shape、warmup 和同步边界。只有这个已有 kernel 的数值、耗时和 workspace 都可接受，才接服务路径。
 5. 对照原式，写出必须改写的参数。已知坑：
    - L2 经由 RMSNorm：`weight = 1/sqrt(dim)`，`eps_rms = eps / dim`。
    - Gemma RMSNorm：缩放是 `1 + weight`。
@@ -44,4 +44,4 @@
 5. 精度护栏：temperature=0 的固定 prompt token 对比。用户要求数据集时再跑数据集。
 6. 并发吞吐只在用户要发布口径时跑。
 
-报告里分开写数值误差、TPOT 或吞吐、trace 中的 op 变化。三项缺一，不说“优化已验证”。
+报告里分开写数值误差、TPOT 或吞吐。用户已提供 trace 时再写 op 变化。缺数值或服务证据时，不说“修复已验证”。

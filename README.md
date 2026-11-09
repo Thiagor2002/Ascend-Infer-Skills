@@ -8,7 +8,7 @@
 
 | 源目录 | 安装名 | 做什么 |
 |---|---|---|
-| [`ascend-310p-performance-skills/`](ascend-310p-performance-skills/) | `ascend-310p-performance` | 在 Ascend 310P 上维护 vLLM-Ascend 推理性能：对照已有优化不变量，用 ais_bench 拆开验证，解读 profiler，并在证据足够时替换融合算子。面向 Qwen3、Qwen3-VL、Qwen3.5、Qwen3.8，以及 Gemma 的 RMSNorm 差异。不用于纯精度定位。 |
+| [`ascend-310p-performance-skills/`](ascend-310p-performance-skills/) | `ascend-310p-performance` | 看护 Ascend 310P 上 vLLM-Ascend 的推理性能，并修复明显拖慢性能的代码。对照无 Triton、FRACTAL_NZ、paged attention 和 event-id 等硬件约束。面向 Qwen3、Qwen3-VL、Qwen3.5、Qwen3.8，以及 Gemma 的 RMSNorm 差异。不用于设计新优化，也不用于纯精度定位。 |
 
 安装名来自该技能 `SKILL.md` frontmatter 的 `name`，与仓库里的源目录名可以不同。触发条件、调用示例和边界写在对应目录的 `README.md` 与 `SKILL.md`。
 
@@ -38,12 +38,14 @@ Ascend-Infer-Skills/
     ├── README.md
     ├── agents/
     │   └── openai.yaml
-    └── references/
+    ├── references/
+    │   ├── hardware-constraints.md
+    │   ├── aisbench-verification.md
+    │   ├── operator-substitution.md
+    │   └── graph-mtp-models.md
+    └── appendix/
         ├── optimization-map.md
-        ├── aisbench-verification.md
-        ├── profiler-analysis.md
-        ├── operator-substitution.md
-        └── graph-mtp-models.md
+        └── profiler-analysis.md
 ```
 
 ## 新增技能
