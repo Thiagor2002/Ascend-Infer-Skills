@@ -64,6 +64,6 @@ ascend-310p-performance/
     └── profiler-analysis.md
 ```
 
-`references/hardware-constraints.md` 写 310P 不支持 Triton、权重与 attention KV 的 FRACTAL_NZ、paged attention 的 head/block/page 限制，以及 event-id 对捕获图数量的限制。`appendix/` 保留原先的优化地图和 profiler 笔记，只在用户明确要求对照历史不变量或解读已有 trace 时打开。
+`references/hardware-constraints.md` 从当前 `HardwareProfile` 列出 310P 登记的能力，并写 Triton、FRACTAL_NZ、paged attention 和 event-id 限制。`references/graph-mtp-models.md` 看护 MTP 叠加 ACLGraph。`references/operator-substitution.md` 只接回漏掉的已有 kernel。`appendix/` 保留原先的优化地图和 profiler 笔记，只在用户明确要求对照历史不变量或解读已有 trace 时打开。
 
 背景分析见 `work-docs/310p-perf/`。技能正文不依赖该目录也能执行。
