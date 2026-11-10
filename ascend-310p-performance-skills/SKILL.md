@@ -15,7 +15,7 @@ description: >-
 ## 按任务读取
 
 - 判断路径是否违反 310P 硬件约束：读 [references/hardware-constraints.md](references/hardware-constraints.md)。
-- 图模式、MTP、Qwen/Gemma 路径差异：读 [references/graph-mtp-models.md](references/graph-mtp-models.md)。
+- 图模式、MTP 叠加 ACLGraph、Qwen/Gemma 路径差异：读 [references/graph-mtp-models.md](references/graph-mtp-models.md)。先确认 target 图和 draft 图是否真的 replay，再测性能。
 - 设计修复前后的分项性能实验：读 [references/aisbench-verification.md](references/aisbench-verification.md)。
 - 热路径漏接了仓库里已经落地的 310P kernel：读 [references/operator-substitution.md](references/operator-substitution.md)。只接已有调用，不搜索新算子。
 
