@@ -56,10 +56,11 @@ ascend-performance-search/
 │   ├── serving-baseline.md
 │   ├── aisbench-harness.md
 │   ├── concurrency-search.md
+│   ├── colocated-pd-matrix.md
 │   └── result-recording.md
 └── tests/manual-tests.md
 ```
 
-`references/serving-baseline.md` 是服务拉起、自检与图捕获上限核算。`references/aisbench-harness.md` 是压测端配置、前缀预热对齐与请求级有效性校验。`references/concurrency-search.md` 是粗扫加细扫的搜索协议与断崖归因。`references/result-recording.md` 是目录结构与结果表头。
+`references/serving-baseline.md` 是服务拉起、自检与图捕获上限核算。`references/aisbench-harness.md` 是压测端配置、前缀预热对齐与请求级有效性校验。`references/concurrency-search.md` 是粗扫加细扫的搜索协议与断崖归因。`references/colocated-pd-matrix.md` 是混部的 DP×TP 布局矩阵、实测并行方向与特性叠加结论。`references/result-recording.md` 是目录结构与结果表头。
 
-PD 混部矩阵、PD 分离配平和多模态图文用例在后续提交补入。
+PD 分离配平和多模态图文用例在后续提交补入。

@@ -20,7 +20,7 @@ description: >-
 | 形态 | 判据 | 入口 |
 |---|---|---|
 | 单实例混部 | 一个 vLLM 进程同时做 prefill 和 decode，卡全部归它 | [服务化基线](references/serving-baseline.md) → [并发寻优](references/concurrency-search.md) |
-| PD 混部矩阵 | 要在 1/2/4/8 卡上比较 DP×TP 布局 | 先读混部矩阵参考（commit 2 引入） |
+| PD 混部矩阵 | 要在 1/2/4/8 卡上比较 DP×TP 布局 | [PD 混部矩阵](references/colocated-pd-matrix.md) |
 | PD 分离 | P、D 独立实例加 proxy，要做 RPS 配平 | 先读 PD 分离参考（commit 3 引入） |
 | 多模态图文 | 输入含 image_url，TTFT 是主门限 | 先读多模态参考（commit 4 引入） |
 
@@ -71,6 +71,7 @@ base 跑通并拿到最优点后才叠加特性，一次一个变量，重新完
 - `ignore_eos=True` 下的输出都是定长的，这类结果不能当精度证据。
 - 多 DP 混部要逐 DP 域预热，否则部分域没有前缀，整体命中率不达标。
 - 一个布局在短序列最优不代表长序列也最优。经验上短序列偏 DP、长序列偏 TP，但每条序列都要独立寻优。
+- 加卡提高的是总吞吐和容量，不是单卡输出。纯 DP 扩展近似保持单卡输出，TP 扩展会明显压低它；多卡布局的价值在于长序列跑得下和 TTFT 达标。
 - 不抢占他人正在运行的 NPU 任务，不 kill 不属于本轮的进程，不因为端口被占就批量清理。
 
 ## 交付
