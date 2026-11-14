@@ -9,6 +9,7 @@
 | 源目录 | 安装名 | 做什么 |
 |---|---|---|
 | [`ascend-310p-performance-skills/`](ascend-310p-performance-skills/) | `ascend-310p-performance` | 看护 Ascend 310P 上 vLLM-Ascend 的推理性能，并修复明显拖慢性能的代码。对照无 Triton、FRACTAL_NZ、paged attention 和 event-id 等硬件约束。面向 Qwen3、Qwen3-VL、Qwen3.5、Qwen3.8，以及 Gemma 的 RMSNorm 差异。不用于设计新优化，也不用于纯精度定位。 |
+| [`ascend-performance-search/`](ascend-performance-search/) | `ascend-performance-search` | 在 Ascend A5（950）及后续机型上，用 vLLM-Ascend 服务化加 AISBench 闭环压测，寻找 TPOT、TTFT 与 prefix cache 命中率约束下的最大单卡输出吞吐，给出对应的并发与 DP/TP 布局，并把全过程建档成可复现的表。 |
 
 安装名来自该技能 `SKILL.md` frontmatter 的 `name`，与仓库里的源目录名可以不同。触发条件、调用示例和边界写在对应目录的 `README.md` 与 `SKILL.md`。
 
@@ -33,19 +34,31 @@ Windows 上 `~` 是 `%USERPROFILE%`。也可以放进项目的 `.cursor/skills/`
 ```text
 Ascend-Infer-Skills/
 ├── README.md
-└── ascend-310p-performance-skills/
+├── ascend-310p-performance-skills/
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── agents/
+│   │   └── openai.yaml
+│   ├── references/
+│   │   ├── hardware-constraints.md
+│   │   ├── aisbench-verification.md
+│   │   ├── operator-substitution.md
+│   │   └── graph-mtp-models.md
+│   └── appendix/
+│       ├── optimization-map.md
+│       └── profiler-analysis.md
+└── ascend-performance-search/
     ├── SKILL.md
     ├── README.md
     ├── agents/
     │   └── openai.yaml
     ├── references/
-    │   ├── hardware-constraints.md
-    │   ├── aisbench-verification.md
-    │   ├── operator-substitution.md
-    │   └── graph-mtp-models.md
-    └── appendix/
-        ├── optimization-map.md
-        └── profiler-analysis.md
+    │   ├── serving-baseline.md
+    │   ├── aisbench-harness.md
+    │   ├── concurrency-search.md
+    │   └── result-recording.md
+    └── tests/
+        └── manual-tests.md
 ```
 
 ## 新增技能

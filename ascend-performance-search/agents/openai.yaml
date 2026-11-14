@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ascend 性能寻优"
+  short_description: "在时延门限下寻找 Ascend 单卡输出吞吐的最优并发与布局"
+  default_prompt: "使用 $ascend-performance-search 在 Ascend A5 上摸测单卡输出性能，先固定口径和服务基线，再按 TPOT 门限做并发寻优，全过程建档。"
